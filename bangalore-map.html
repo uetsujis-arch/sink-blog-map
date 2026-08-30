@@ -435,25 +435,25 @@
 
   // 地図にピンを立てられない「行事」記事のスタンプ帳一覧。articleUrl が入るまでは灰色の「未公開」スタンプ表示になる
   const cultureStamps = [
-    { icon:'🛶', label:'オナム祭', date:'8月', rotate:-6,
-      articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%82%a4%e3%83%b3%e3%83%89%e7%94%9f%e6%b4%bb%e3%80%91%e3%82%b1%e3%83%a9%e3%83%a9%e6%9c%80%e5%a4%a7%e3%81%ae%e7%a5%ad%e3%82%8a%e3%80%8conam%e3%82%aa%e3%83%8a%e3%83%a0%e3%80%8d%e3%81%a8/" },
-    { icon:'🪁', label:'独立記念日', date:'8/15', rotate:5,
-      articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%83%90%e3%83%b3%e3%82%ac%e3%83%ad%e3%83%bc%e3%83%ab%e3%80%91%e3%82%a4%e3%83%b3%e3%83%89%e7%8b%ac%e7%ab%8b%e8%a8%98%e5%bf%b5%e6%97%a5%e3%81%a8%e3%81%af%ef%bc%9f%e7%94%b1%e6%9d%a5%e3%83%bb/" },
-    { icon:'🙏', label:'シュラーヴァン月', date:'8月', rotate:-4,
-      articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%82%a4%e3%83%b3%e3%83%89%e7%94%9f%e6%b4%bb%e3%80%91%e9%81%8b%e8%bb%a2%e6%89%8b%e3%81%95%e3%82%93%e3%81%8c%e5%ae%9f%e8%b7%b5%e3%81%99%e3%82%8b%e3%80%8c%e3%82%b7%e3%83%a5%e3%83%a9%e3%83%bc/" },
-    { icon:'🪔', label:'ヴァララクシュミー', date:'8月', rotate:6,
-      articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%83%90%e3%83%b3%e3%82%ac%e3%83%ad%e3%83%bc%e3%83%ab%e3%80%91%e5%ae%b6%e3%81%ab%e3%83%a9%e3%82%af%e3%82%b7%e3%83%a5%e3%83%9f%e3%83%bc%e5%83%8f%e3%82%92%e7%a5%80%e3%82%8b%e5%8d%97%e3%82%a4/" },
-    { icon:'🎗️', label:'ラクシャー・バンダン', date:'8月', rotate:-5,
-      articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%82%a4%e3%83%b3%e3%83%89%e3%80%91%e3%83%a9%e3%82%af%e3%82%b7%e3%83%a3%e3%83%bc%e3%83%bb%e3%83%90%e3%83%b3%e3%83%80%e3%83%b3%e3%81%a8%e3%81%af%ef%bc%9f%e3%83%a9%e3%83%bc%e3%82%ad/" },
     { icon:'☔', label:'モンスーンのパコラ', date:'雨季', rotate:4,
       articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%83%90%e3%83%b3%e3%82%ac%e3%83%ad%e3%83%bc%e3%83%ab%e9%a7%90%e5%9c%a8%e3%80%91%e3%83%a2%e3%83%b3%e3%82%b9%e3%83%bc%e3%83%b3%e3%81%ae%e3%80%8c%e3%83%91%e3%82%b3%e3%83%a9x%e3%83%81/" },
-    { icon:'🌑', label:'ピトゥル・パクシャ', date:'9/26-10/10', rotate:-5,
+    { icon:'🙏', label:'シュラーヴァン月', date:'8/13-9/11', rotate:-4,
+      articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%82%a4%e3%83%b3%e3%83%89%e7%94%9f%e6%b4%bb%e3%80%91%e9%81%8b%e8%bb%a2%e6%89%8b%e3%81%95%e3%82%93%e3%81%8c%e5%ae%9f%e8%b7%b5%e3%81%99%e3%82%8b%e3%80%8c%e3%82%b7%e3%83%a5%e3%83%a9%e3%83%bc/" },
+    { icon:'🪁', label:'独立記念日', date:'8/15', rotate:5,
+      articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%83%90%e3%83%b3%e3%82%ac%e3%83%ad%e3%83%bc%e3%83%ab%e3%80%91%e3%82%a4%e3%83%b3%e3%83%89%e7%8b%ac%e7%ab%8b%e8%a8%98%e5%bf%b5%e6%97%a5%e3%81%a8%e3%81%af%ef%bc%9f%e7%94%b1%e6%9d%a5%e3%83%bb/" },
+    { icon:'🪔', label:'ヴァララクシュミー', date:'8/21', rotate:6,
+      articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%83%90%e3%83%b3%e3%82%ac%e3%83%ad%e3%83%bc%e3%83%ab%e3%80%91%e5%ae%b6%e3%81%ab%e3%83%a9%e3%82%af%e3%82%b7%e3%83%a5%e3%83%9f%e3%83%bc%e5%83%8f%e3%82%92%e7%a5%80%e3%82%8b%e5%8d%97%e3%82%a4/" },
+    { icon:'🛶', label:'オナム祭', date:'8/26', rotate:-6,
+      articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%82%a4%e3%83%b3%e3%83%89%e7%94%9f%e6%b4%bb%e3%80%91%e3%82%b1%e3%83%a9%e3%83%a9%e6%9c%80%e5%a4%a7%e3%81%ae%e7%a5%ad%e3%82%8a%e3%80%8conam%e3%82%aa%e3%83%8a%e3%83%a0%e3%80%8d%e3%81%a8/" },
+    { icon:'🎗️', label:'ラクシャー・バンダン', date:'8/28', rotate:-5,
+      articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%82%a4%e3%83%b3%e3%83%89%e3%80%91%e3%83%a9%e3%82%af%e3%82%b7%e3%83%a3%e3%83%bc%e3%83%bb%e3%83%90%e3%83%b3%e3%83%80%e3%83%b3%e3%81%a8%e3%81%af%ef%bc%9f%e3%83%a9%e3%83%bc%e3%82%ad/" },
+    { icon:'🦚', label:'ジャンマシュタミ', date:'9/4', rotate:-4,
       articleUrl:null },
     { icon:'🐘', label:'ガネーシャ・チャトゥルティ', date:'9/14', rotate:5,
       articleUrl:null },
-    { icon:'🦚', label:'ジャンマシュタミ', date:'9/4', rotate:-4,
-      articleUrl:null },
     { icon:'🛠️', label:'ヴィシュワカルマ・プジャ', date:'9/17', rotate:6,
+      articleUrl:null },
+    { icon:'🌑', label:'ピトゥル・パクシャ', date:'9/26-10/10', rotate:-5,
       articleUrl:null }
   ];
 
