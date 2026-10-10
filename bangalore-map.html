@@ -187,6 +187,15 @@
   .postcards .pc-sub{margin:4px 0 0;font-size:14px;color:var(--ink-soft);}
   .pc-band{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:20px 14px 40px;}
   .pc-track{display:flex;gap:18px;width:max-content;}
+  .pc-track.smooth{transition:transform .55s cubic-bezier(.3,.9,.3,1);}
+  .pc-wrap{position:relative;}
+  .pc-arrow{position:absolute;top:50%;margin-top:-26px;z-index:3;width:44px;height:44px;padding:0 0 3px;border:none;border-radius:50%;background:rgba(255,251,241,.96);color:var(--vermillion);font-size:28px;line-height:1;font-family:'Zen Kaku Gothic New',sans-serif;box-shadow:0 3px 12px rgba(34,58,94,.28);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .2s ease,transform .2s ease;}
+  .pc-arrow:hover{transform:scale(1.08);}
+  .pc-arrow:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  .pc-arrow:disabled{opacity:.3;cursor:default;transform:none;}
+  .pc-prev{left:6px;}
+  .pc-next{right:6px;}
+  @media (max-width:480px){.pc-arrow{width:38px;height:38px;font-size:24px;margin-top:-22px;}.pc-prev{left:2px;}.pc-next{right:2px;}}
   .motion .pc-band{overflow:hidden;}
   .motion .pc-track{will-change:transform;}
   .pcard{--rot:0deg;--dy:0px;--px:0px;position:relative;flex:none;width:250px;height:176px;box-sizing:border-box;padding:14px 14px 10px;display:flex;flex-direction:column;gap:3px;text-decoration:none;color:var(--ink);background:#FBF6E9;border:1px solid rgba(34,58,94,.12);border-radius:3px;box-shadow:0 6px 16px rgba(34,58,94,.16);transform:translate(var(--px),var(--dy)) rotate(var(--rot));transition:transform .28s ease,box-shadow .28s ease;}
@@ -283,7 +292,11 @@
     <div class="pc-main" data-reveal>旅先からの絵はがき</div>
     <p class="pc-sub" data-reveal>これまでの記事から、毎日ちがう9枚。</p>
   </div>
-  <div class="pc-band" id="pc-band"><div class="pc-track" id="pc-track"></div></div>
+  <div class="pc-wrap">
+    <button class="pc-arrow pc-prev" id="pc-prev" type="button" aria-label="前のはがきへ">&#8249;</button>
+    <div class="pc-band" id="pc-band"><div class="pc-track" id="pc-track"></div></div>
+    <button class="pc-arrow pc-next" id="pc-next" type="button" aria-label="次のはがきへ">&#8250;</button>
+  </div>
 </section>
 
 <section class="stamp-book" aria-label="行事スタンプ帳">
@@ -891,14 +904,38 @@
   let view = null, motionOn = false, counted = false;
 
   // 絵はがきの帯: スクロール連動の位置 + 指/マウスで動かした分(userX)
-  let lastP = 0, userX = 0;
+  let lastP = 0, userX = 0, curX = 0, curRange = 0;
+  const prevBtn = document.getElementById('pc-prev'), nextBtn = document.getElementById('pc-next');
+  const updateArrows = () => {
+    if (motionOn) { prevBtn.disabled = curX >= -1; nextBtn.disabled = curX <= -curRange + 1; }
+    else { prevBtn.disabled = pcBand.scrollLeft <= 1; nextBtn.disabled = pcBand.scrollLeft >= pcBand.scrollWidth - pcBand.clientWidth - 1; }
+  };
   const applyBand = () => {
     const range = Math.max(0, pcTrack.scrollWidth - pcBand.clientWidth + 28);
     userX = clamp(userX, -range, range);
     const x = clamp(-lastP * range + userX, -range, 0);
+    curX = x; curRange = range;
     pcTrack.style.transform = `translateX(${x}px)`;
     pcCards.forEach(c => c.style.setProperty('--px', (((lastP - 0.5) * 60) * c.dataset.depth) + 'px'));
+    updateArrows();
   };
+  // 矢印ボタン: 1枚ぶんずつ送る(演出が効いている間は帯を動かし、そうでなければ横スクロール)
+  const nudge = dir => {
+    const card = pcCards[0], step = (card ? card.offsetWidth + 18 : 260) * dir;
+    if (motionOn) {
+      const range = Math.max(0, pcTrack.scrollWidth - pcBand.clientWidth + 28);
+      const target = clamp(clamp(-lastP * range + userX, -range, 0) - step, -range, 0);
+      userX = target + lastP * range;
+      pcTrack.classList.add('smooth'); applyBand();
+      setTimeout(() => pcTrack.classList.remove('smooth'), 650);
+    } else {
+      pcBand.scrollBy({ left: step, behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+  };
+  prevBtn.addEventListener('click', () => nudge(-1));
+  nextBtn.addEventListener('click', () => nudge(1));
+  pcBand.addEventListener('scroll', updateArrows, { passive: true });
+  updateArrows();
   let drag = null, dragMoved = false;
   pcBand.addEventListener('pointerdown', e => {
     if (!motionOn) return;
