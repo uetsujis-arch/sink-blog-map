@@ -222,7 +222,8 @@
   .motion .event-stamp{opacity:0;transform:translateY(28px) scale(1.32) rotate(calc(var(--r) - 14deg));transition:opacity .45s ease var(--d,0s),transform .75s cubic-bezier(.2,1.5,.4,1) var(--d,0s);}
   .motion .event-stamp.in{opacity:1;transform:rotate(var(--r));}
   .motion .event-stamp.draft.in{opacity:.6;}
-  .motion .event-stamp.in:not(.draft)::after{animation:inkRipple .9s ease-out var(--d,0s) 1 both;}
+  .motion .event-stamp.in:not(.draft)::after{animation:inkRipple .9s ease-out var(--d,0s) 1 backwards;}
+  .stamp-book{overflow-x:clip;}
   .motion .event-stamp.in.done{transition:transform .2s ease,box-shadow .2s ease;}
   .motion .event-stamp.in.done:hover,.motion .event-stamp.in.done:focus-visible{transform:rotate(0deg) scale(1.08);box-shadow:0 3px 10px rgba(34,58,94,.2);}
   @media (prefers-reduced-motion: reduce){.motion .event-stamp,.motion .stamp-book-head,.motion .sb-sub,.motion .sb-kicker{opacity:1;transform:none;transition:none;}}
@@ -768,7 +769,7 @@
   document.getElementById('stamp-progress').innerHTML = `${gotStamps}<small>/${cultureStamps.length}</small> コンプリート`;
   // 行事日の月ごとにまとめて、縦のタイムライン(季節の流れ)として並べる。配列は日付順に書いておく
   const monthOf = d => { const m = /^(\d+)\//.exec(d); return m ? parseInt(m[1], 10) : 0; };
-  const seasonOf = m => m === 0 ? 'モンスーン' : (m >= 6 && m <= 9 ? '雨季' : (m >= 10 && m <= 11 ? '祭りの秋' : ''));
+  const seasonOf = m => m === 0 ? 'モンスーン' : (m >= 3 && m <= 5 ? '暑季' : (m >= 6 && m <= 9 ? '雨季' : (m >= 10 && m <= 11 ? '雨上がり' : '涼季')));
   // 未公開スタンプ用: 行事の開始日までの残り日数(行事中は「開催中」、終わっていれば空)
   const todayDate = new Date(); todayDate.setHours(0, 0, 0, 0);
   const eventRange = d => {
@@ -952,12 +953,21 @@
   window.addEventListener('pointercancel', endDrag);
   pcBand.addEventListener('click', e => { if (dragMoved) { e.preventDefault(); e.stopPropagation(); dragMoved = false; } }, true);
 
-  // 季節の背景色(0〜1)。紙の色 → 雨季の青灰 → 雨上がり → 祭りの金 → サフラン
-  const bgStops = [[0, [247, 241, 221]], [0.22, [229, 236, 233]], [0.5, [242, 236, 212]], [0.78, [248, 230, 190]], [1, [246, 216, 176]]];
-  const setPageBg = t => {
-    let i = 1; while (i < bgStops.length - 1 && t > bgStops[i][0]) i++;
-    const [t0, c0] = bgStops[i - 1], [t1, c1] = bgStops[i], k = clamp((t - t0) / (t1 - t0), 0, 1);
-    document.documentElement.style.setProperty('--page-bg', `rgb(${c0.map((v, j) => Math.round(v + (c1[j] - v) * k)).join(',')})`);
+  // 背景色は「その月の気温・季節」に合わせる(バンガロールの暑季3〜5月=暖色、雨季6〜9月=青灰、雨上がり10〜11月=澄んだ淡い青緑、涼季12〜2月=冷たい淡青)
+  const monthTint = { 0: [225, 233, 236], 1: [226, 237, 247], 2: [231, 241, 243], 3: [250, 239, 212], 4: [252, 228, 198], 5: [252, 224, 194], 6: [224, 232, 236], 7: [220, 230, 235], 8: [225, 234, 233], 9: [229, 238, 232], 10: [227, 239, 241], 11: [222, 234, 246], 12: [221, 233, 246] };
+  const paperRgb = [247, 241, 221];
+  const rowTints = groups.map(g => monthTint[g.m] || paperRgb);
+  const mix = (a, b, k) => a.map((v, i) => Math.round(v + (b[i] - v) * k));
+  const setPageBgByRows = (anchor, tops) => {
+    if (!tops.length) return;
+    let c;
+    if (anchor <= tops[0]) c = mix(paperRgb, rowTints[0], clamp(1 - (tops[0] - anchor) / 360, 0, 1));
+    else if (anchor >= tops[tops.length - 1]) c = rowTints[tops.length - 1];
+    else {
+      let i = 0; while (i < tops.length - 2 && tops[i + 1] <= anchor) i++;
+      c = mix(rowTints[i], rowTints[i + 1], clamp((anchor - tops[i]) / (tops[i + 1] - tops[i]), 0, 1));
+    }
+    document.documentElement.style.setProperty('--page-bg', `rgb(${c.join(',')})`);
   };
   const countUp = () => {
     if (counted) return; counted = true;
@@ -988,9 +998,6 @@
       lastP = p;
       applyBand();
     }
-    // 季節の背景色: タイムラインを下るにつれて、雨季のくすんだ青灰色 → 祭りの秋の金色へ
-    const tlH = timeline.offsetHeight || 1;
-    setPageBg(clamp((anchor - timeline.getBoundingClientRect().top) / tlH, 0, 1));
     stampEls.forEach(el => {
       if (!el.classList.contains('in') && el.getBoundingClientRect().top < vb - 40) {
         el.classList.add('in'); setTimeout(() => el.classList.add('done'), 1500);
@@ -999,13 +1006,16 @@
     const trackTop = timeline.getBoundingClientRect().top + parseFloat(tlTrack.style.top || 0);
     const trackH = parseFloat(tlTrack.style.height || 0);
     tlProgress.style.height = clamp(anchor - trackTop, 0, trackH) + 'px';
+    const tops = [];
     rows.forEach(row => {
       const rr = row.getBoundingClientRect();
+      tops.push(rr.top + 22);
       row.classList.toggle('active', rr.top + 22 < anchor);
       const label = row.firstElementChild;
       const shift = clamp(vt + 12 - rr.top, 0, Math.max(0, rr.height - label.offsetHeight - 4));
       label.style.transform = shift ? `translateY(${shift}px)` : '';
     });
+    setPageBgByRows(anchor, tops);
   };
 
   window.addEventListener('message', e => {
