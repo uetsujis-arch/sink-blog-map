@@ -148,15 +148,23 @@
 
   /* ---- Culture stamps (below map, for "行事" articles with no pinnable location) ---- */
   body{margin:0;background:#F7F1DD;}
-  .stamp-book{max-width:640px;margin:14px auto 0;padding:12px 16px 20px;font-family:'Zen Kaku Gothic New',sans-serif;}
-  .stamp-book-head{display:flex;align-items:baseline;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .stamp-book{margin:14px 0 0;padding:14px 14px 22px;font-family:'Zen Kaku Gothic New',sans-serif;}
+  .stamp-book .sb-sub{margin:0 0 14px;text-align:center;font-size:12px;color:var(--ink-soft);}
+  .stamp-timeline{display:flex;flex-direction:column;gap:6px;}
+  .tl-row{position:relative;display:grid;grid-template-columns:50px 1fr;gap:4px;}
+  .tl-row::before{content:'';position:absolute;left:24px;top:22px;bottom:-8px;width:0;border-left:2px dashed rgba(199,69,28,.35);}
+  .tl-row:last-child::before{display:none;}
+  .tl-label{position:relative;display:flex;flex-direction:column;align-items:center;padding-top:2px;z-index:1;}
+  .tl-label .tl-month{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:var(--vermillion);color:#fff9ec;font-family:'Shippori Mincho',serif;font-weight:700;font-size:13px;box-shadow:0 0 0 3px #F7F1DD;}
+  .tl-label small{margin-top:3px;font-size:9px;color:var(--ink-soft);text-align:center;line-height:1.2;}
+  .tl-stamps{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:10px 8px;padding-bottom:10px;}
+  .stamp-book-head{display:flex;align-items:baseline;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
   .stamp-book-head .sb-title{font-family:'Shippori Mincho',serif;font-weight:700;font-size:15px;color:var(--ink);}
   .stamp-book-head .sb-progress{font-size:12px;font-weight:700;color:#fff9ec;background:var(--vermillion);padding:3px 11px;border-radius:999px;letter-spacing:.02em;}
   .stamp-book-head .sb-progress small{font-weight:500;opacity:.85;}
-  .stamp-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 18px;}
   .event-stamp{
     --r:0deg;
-    position:relative;width:92px;height:92px;border-radius:50%;
+    position:relative;width:100%;max-width:112px;aspect-ratio:1/1;justify-self:center;border-radius:50%;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
     text-decoration:none;color:var(--vermillion);
     border:3px double var(--vermillion);
@@ -200,7 +208,8 @@
     <span class="sb-title">📮 行事スタンプ帳</span>
     <span class="sb-progress" id="stamp-progress">0<small>/0</small> コンプリート</span>
   </div>
-  <div class="stamp-grid" id="stamp-grid"></div>
+  <p class="sb-sub">インドの季節を、行事の日付順にたどる ↓</p>
+  <div class="stamp-timeline" id="stamp-grid"></div>
 </section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -638,15 +647,42 @@
   const stampGrid = document.getElementById('stamp-grid');
   const gotStamps = cultureStamps.filter(s => s.articleUrl).length;
   document.getElementById('stamp-progress').innerHTML = `${gotStamps}<small>/${cultureStamps.length}</small> コンプリート`;
+  // 行事日の月ごとにまとめて、縦のタイムライン(季節の流れ)として並べる。配列は日付順に書いておく
+  const monthOf = d => { const m = /^(\d+)\//.exec(d); return m ? parseInt(m[1], 10) : 0; };
+  const seasonOf = m => m === 0 ? 'モンスーン' : (m >= 6 && m <= 9 ? '雨季' : (m >= 10 && m <= 11 ? '祭りの秋' : ''));
+  const groups = [];
   cultureStamps.forEach(s => {
-    const isDraft = !s.articleUrl;
-    const el = document.createElement(isDraft ? 'div' : 'a');
-    el.className = `event-stamp${isDraft ? ' draft' : ''}`;
-    el.style.setProperty('--r', `${s.rotate}deg`);
-    if (!isDraft) { el.href = s.articleUrl; el.target = '_blank'; el.rel = 'noopener'; }
-    el.innerHTML = `<span class="es-icon">${s.icon}</span><span class="es-label">${s.label}</span><span class="es-date">${s.date}</span>`;
-    stampGrid.appendChild(el);
+    const m = monthOf(s.date);
+    let g = groups[groups.length - 1];
+    if (!g || g.m !== m) { g = { m, items: [] }; groups.push(g); }
+    g.items.push(s);
   });
+  groups.forEach(g => {
+    const row = document.createElement('div');
+    row.className = 'tl-row';
+    row.innerHTML = `<div class="tl-label"><span class="tl-month">${g.m === 0 ? '雨季' : g.m + '月'}</span><small>${g.m === 0 ? '' : seasonOf(g.m)}</small></div>`;
+    const box = document.createElement('div');
+    box.className = 'tl-stamps';
+    g.items.forEach(s => {
+      const isDraft = !s.articleUrl;
+      const el = document.createElement(isDraft ? 'div' : 'a');
+      el.className = `event-stamp${isDraft ? ' draft' : ''}`;
+      el.style.setProperty('--r', `${s.rotate}deg`);
+      if (!isDraft) { el.href = s.articleUrl; el.target = '_blank'; el.rel = 'noopener'; }
+      el.innerHTML = `<span class="es-icon">${s.icon}</span><span class="es-label">${s.label}</span><span class="es-date">${s.date}</span>`;
+      box.appendChild(el);
+    });
+    row.appendChild(box);
+    stampGrid.appendChild(row);
+  });
+
+  // 埋め込み先(iframe)の高さを中身に合わせて親ページへ通知する
+  const sendHeight = () => {
+    const h = Math.ceil(document.body.getBoundingClientRect().height);
+    if (window.parent !== window) window.parent.postMessage({ sinkMapHeight: h }, '*');
+  };
+  if (window.ResizeObserver) new ResizeObserver(sendHeight).observe(document.body);
+  window.addEventListener('load', sendHeight);
 
   // フォント読み込み等で埋め込み先のレイアウトが後から変わった場合の保険
   window.addEventListener('load', () => map.invalidateSize());
