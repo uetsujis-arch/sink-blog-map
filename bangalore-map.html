@@ -23,7 +23,7 @@
     --hotel-blue: #2F6FBF;
   }
   .sink-map-embed, .sink-map-embed *{box-sizing:border-box;}
-  .sink-map-embed{margin:0;padding:0;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--ink);display:flex;flex-direction:column;background:var(--bg-blue);height:640px;max-height:85vh;border-radius:6px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.18);}
+  .sink-map-embed{margin:0;padding:0;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--ink);display:flex;flex-direction:column;background:var(--bg-blue);height:684px;max-height:85vh;border-radius:6px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.18);}
 
   /* ---- Header ---- */
   .sink-map-embed header{
@@ -147,7 +147,23 @@
   .sink-map-embed .card .map-link:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
 
   /* ---- Culture stamps (below map, for "行事" articles with no pinnable location) ---- */
-  body{margin:0;background:#F7F1DD;}
+  :root{--page-bg:#F7F1DD;}
+  body{margin:0;background-color:var(--page-bg);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .33 0 0 0 0 .18 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .sink-map-embed .stats{display:flex;justify-content:center;align-items:stretch;margin:2px 0 9px;color:#fff9ec;}
+  .sink-map-embed .stats .st{padding:0 16px;text-align:center;line-height:1.1;}
+  .sink-map-embed .stats .st + .st{border-left:1px solid rgba(255,249,236,.35);}
+  .sink-map-embed .stats .st b{display:block;font-family:'Shippori Mincho',serif;font-weight:700;font-size:21px;letter-spacing:.02em;}
+  .sink-map-embed .stats .st small{display:block;margin-top:2px;font-size:10px;letter-spacing:.1em;opacity:.88;}
+  .next-fest{display:flex;align-items:center;gap:14px;margin:0 0 20px;padding:12px 18px;border-radius:12px;background:#FFFBF1;border:1.5px dashed var(--vermillion);color:var(--ink);text-decoration:none;box-shadow:0 4px 14px rgba(34,58,94,.08);}
+  .next-fest .nf-icon{font-size:36px;line-height:1;}
+  .next-fest .nf-body{flex:1;min-width:0;}
+  .next-fest .nf-kicker{font-size:10px;letter-spacing:.24em;color:var(--ink-soft);}
+  .next-fest .nf-name{font-family:'Shippori Mincho',serif;font-weight:700;font-size:19px;line-height:1.25;}
+  .next-fest .nf-sub{margin-top:2px;font-size:12px;color:var(--ink-soft);}
+  .next-fest .nf-count{font-family:'Shippori Mincho',serif;font-weight:700;font-size:24px;color:var(--vermillion);white-space:nowrap;text-align:right;line-height:1.1;}
+  .next-fest .nf-count small{display:block;font-size:11px;font-weight:500;color:var(--ink-soft);}
+  a.next-fest:hover{box-shadow:0 8px 20px rgba(34,58,94,.16);}
+  .motion .pc-band{touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;}
   .stamp-book{margin:14px 0 0;padding:14px 14px 22px;font-family:'Zen Kaku Gothic New',sans-serif;}
   .stamp-book .sb-sub{margin:0 0 14px;text-align:center;font-size:12px;color:var(--ink-soft);}
   .stamp-timeline{position:relative;display:flex;flex-direction:column;gap:6px;}
@@ -155,7 +171,7 @@
   .tl-progress{position:absolute;left:24px;width:2px;height:0;background:var(--vermillion);border-radius:2px;pointer-events:none;}
   .tl-row{position:relative;display:grid;grid-template-columns:50px 1fr;gap:4px;}
   .tl-label{position:relative;display:flex;flex-direction:column;align-items:center;padding-top:2px;z-index:1;align-self:start;will-change:transform;}
-  .tl-label .tl-month{box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;border:2px solid var(--vermillion);background:var(--vermillion);color:#fff9ec;font-family:'Shippori Mincho',serif;font-weight:700;font-size:15px;box-shadow:0 0 0 3px #F7F1DD;transition:background .4s ease,color .4s ease,transform .5s cubic-bezier(.2,1.4,.4,1);}
+  .tl-label .tl-month{box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;border:2px solid var(--vermillion);background:var(--vermillion);color:#fff9ec;font-family:'Shippori Mincho',serif;font-weight:700;font-size:15px;box-shadow:0 0 0 3px var(--page-bg);transition:background .4s ease,color .4s ease,transform .5s cubic-bezier(.2,1.4,.4,1);}
   .stamp-book-head .sb-title{font-size:24px;letter-spacing:.06em;}
   .stamp-book-head .sb-progress{font-size:14px;}
   .stamp-book .sb-sub{font-size:14px;}
@@ -192,7 +208,7 @@
   .motion .stamp-book-head,.motion .sb-sub,.motion .sb-kicker{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease;}
   .motion .stamp-book-head.in,.motion .sb-sub.in,.motion .sb-kicker.in{opacity:1;transform:none;}
   .motion .sb-sub.in{transition-delay:.15s;}
-  .motion .tl-row:not(.active) .tl-month{background:#F7F1DD;color:var(--vermillion);}
+  .motion .tl-row:not(.active) .tl-month{background:var(--page-bg);color:var(--vermillion);}
   .motion .tl-row.active .tl-month{transform:scale(1.1);}
   .motion .event-stamp{opacity:0;transform:translateY(28px) scale(1.32) rotate(calc(var(--r) - 14deg));transition:opacity .45s ease var(--d,0s),transform .75s cubic-bezier(.2,1.5,.4,1) var(--d,0s);}
   .motion .event-stamp.in{opacity:1;transform:rotate(var(--r));}
@@ -244,6 +260,11 @@
   <h1>SINK夫婦の世界ブログ地図</h1>
   </div>
   <div class="sub">SINK夫婦の旅する暮らし</div>
+  <div class="stats" id="stats">
+    <div class="st"><b data-stat="countries">0</b><small>訪れた国・地域</small></div>
+    <div class="st"><b data-stat="articles">0</b><small>記事</small></div>
+    <div class="st"><b data-stat="spots">0</b><small>スポット</small></div>
+  </div>
   <div class="legend">
     <div class="chip active" data-cat="food"><span class="dot">🍜</span>食べ物編</div>
     <div class="chip active" data-cat="travel"><span class="dot">🗼</span>旅行編</div>
@@ -694,8 +715,25 @@
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion) { map.setView(WORLD_VIEW[0], WORLD_VIEW[1]); }
   else { map.setView([12.97, 77.59], 5); }
+  // ヘッダーのサマリー帯(件数はデータから自動計算)。最終値を先に入れておき、地図の導入と同時に0からカウントアップする
+  const statValues = {
+    countries: countryHighlights.features.length,
+    articles: new Set(spots.map(s => s.articleUrl).concat(cultureStamps.map(s => s.articleUrl)).filter(Boolean)).size,
+    spots: spots.length
+  };
+  const statEls = Array.from(document.querySelectorAll('[data-stat]'));
+  statEls.forEach(el => { el.textContent = statValues[el.dataset.stat]; });
+  const startStats = () => {
+    const t0 = performance.now();
+    const step = now => {
+      const p = Math.min(1, (now - t0) / 1400), e = 1 - Math.pow(1 - p, 3);
+      statEls.forEach(el => { el.textContent = Math.round(statValues[el.dataset.stat] * e); });
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
   let introDone = reduceMotion;
-  const runIntro = () => { if (introDone) return; introDone = true; map.flyTo(WORLD_VIEW[0], WORLD_VIEW[1], { duration: 2.8 }); };
+  const runIntro = () => { if (introDone) return; introDone = true; startStats(); map.flyTo(WORLD_VIEW[0], WORLD_VIEW[1], { duration: 2.8 }); };
 
   // カテゴリ切り替え(チップをクリックで表示/非表示)
   document.querySelectorAll('.chip').forEach(chip => {
@@ -719,16 +757,22 @@
   const monthOf = d => { const m = /^(\d+)\//.exec(d); return m ? parseInt(m[1], 10) : 0; };
   const seasonOf = m => m === 0 ? 'モンスーン' : (m >= 6 && m <= 9 ? '雨季' : (m >= 10 && m <= 11 ? '祭りの秋' : ''));
   // 未公開スタンプ用: 行事の開始日までの残り日数(行事中は「開催中」、終わっていれば空)
-  const countdownOf = d => {
+  const todayDate = new Date(); todayDate.setHours(0, 0, 0, 0);
+  const eventRange = d => {
     const m = /^(\d+)\/(\d+)(?:-(\d+)\/(\d+))?$/.exec(d);
-    if (!m) return '';
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    let y = today.getFullYear();
+    if (!m) return null;
+    let y = todayDate.getFullYear();
     const mk = yy => [new Date(yy, +m[1] - 1, +m[2]), m[3] ? new Date(yy, +m[3] - 1, +m[4]) : new Date(yy, +m[1] - 1, +m[2])];
     let [start, end] = mk(y);
-    if (end < today - 200 * 864e5) [start, end] = mk(++y);
-    if (today < start) return `あと${Math.round((start - today) / 864e5)}日`;
-    return today <= end ? '開催中' : '';
+    if (end < todayDate - 200 * 864e5) [start, end] = mk(++y);
+    return { start, end };
+  };
+  const daysUntil = dt => Math.round((dt - todayDate) / 864e5);
+  const countdownOf = d => {
+    const r = eventRange(d);
+    if (!r) return '';
+    if (todayDate < r.start) return `あと${daysUntil(r.start)}日`;
+    return todayDate <= r.end ? '開催中' : '';
   };
   const groups = [];
   cultureStamps.forEach(s => {
@@ -757,6 +801,22 @@
     row.appendChild(box);
     stampGrid.appendChild(row);
   });
+
+  // 次の行事バナー: 今日以降で一番近い行事までのカウントダウン(開催中の行事があれば併記)
+  (() => {
+    const evs = cultureStamps.map(s => ({ s, r: eventRange(s.date) })).filter(e => e.r);
+    const ongoing = evs.filter(e => e.r.start <= todayDate && todayDate <= e.r.end);
+    const upcoming = evs.filter(e => e.r.start > todayDate).sort((a, b) => a.r.start - b.r.start);
+    if (!upcoming.length) return;
+    const n = upcoming[0], days = daysUntil(n.r.start);
+    const el = document.createElement(n.s.articleUrl ? 'a' : 'div');
+    el.className = 'next-fest';
+    el.setAttribute('data-reveal', '');
+    if (n.s.articleUrl) { el.href = n.s.articleUrl; el.target = '_blank'; el.rel = 'noopener'; }
+    const onNow = ongoing.length ? `いま開催中:${ongoing.map(e => e.s.label).join('・')}` : '';
+    el.innerHTML = `<span class="nf-icon">${n.s.icon}</span><span class="nf-body"><span class="nf-kicker">NEXT FESTIVAL</span><div class="nf-name">${n.s.label}</div><div class="nf-sub">${n.s.date}${onNow ? ' ／ ' + onNow : ''}</div></span><span class="nf-count">${days === 1 ? '明日' : 'あと' + days + '日'}<small>${n.s.articleUrl ? '記事を読む →' : '公開をお楽しみに'}</small></span>`;
+    stampGrid.parentElement.insertBefore(el, stampGrid);
+  })();
 
   // 「プロモーション」または「アフィリエイト」の表記がある記事(WordPress REST APIの本文で判定。Updateのたびに更新する)
   const affiliateArticles = new Set([
@@ -829,6 +889,39 @@
   layoutTimeline();
 
   let view = null, motionOn = false, counted = false;
+
+  // 絵はがきの帯: スクロール連動の位置 + 指/マウスで動かした分(userX)
+  let lastP = 0, userX = 0;
+  const applyBand = () => {
+    const range = Math.max(0, pcTrack.scrollWidth - pcBand.clientWidth + 28);
+    userX = clamp(userX, -range, range);
+    const x = clamp(-lastP * range + userX, -range, 0);
+    pcTrack.style.transform = `translateX(${x}px)`;
+    pcCards.forEach(c => c.style.setProperty('--px', (((lastP - 0.5) * 60) * c.dataset.depth) + 'px'));
+  };
+  let drag = null, dragMoved = false;
+  pcBand.addEventListener('pointerdown', e => {
+    if (!motionOn) return;
+    drag = { x: e.clientX, id: e.pointerId }; dragMoved = false;
+  });
+  window.addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x;
+    if (Math.abs(dx) > 4) dragMoved = true;
+    if (dragMoved) { userX += dx; drag.x = e.clientX; applyBand(); }
+  });
+  const endDrag = () => { drag = null; };
+  window.addEventListener('pointerup', endDrag);
+  window.addEventListener('pointercancel', endDrag);
+  pcBand.addEventListener('click', e => { if (dragMoved) { e.preventDefault(); e.stopPropagation(); dragMoved = false; } }, true);
+
+  // 季節の背景色(0〜1)。紙の色 → 雨季の青灰 → 雨上がり → 祭りの金 → サフラン
+  const bgStops = [[0, [247, 241, 221]], [0.22, [229, 236, 233]], [0.5, [242, 236, 212]], [0.78, [248, 230, 190]], [1, [246, 216, 176]]];
+  const setPageBg = t => {
+    let i = 1; while (i < bgStops.length - 1 && t > bgStops[i][0]) i++;
+    const [t0, c0] = bgStops[i - 1], [t1, c1] = bgStops[i], k = clamp((t - t0) / (t1 - t0), 0, 1);
+    document.documentElement.style.setProperty('--page-bg', `rgb(${c0.map((v, j) => Math.round(v + (c1[j] - v) * k)).join(',')})`);
+  };
   const countUp = () => {
     if (counted) return; counted = true;
     const el = document.getElementById('stamp-progress'); const t0 = performance.now();
@@ -855,10 +948,12 @@
     if (pcCards.length) {
       const bandRect = pcBand.getBoundingClientRect();
       const p = clamp((vb - bandRect.top) / (view.vh + bandRect.height), 0, 1);
-      const range = Math.max(0, pcTrack.scrollWidth - pcBand.clientWidth + 28);
-      pcTrack.style.transform = `translateX(${-p * range}px)`;
-      pcCards.forEach(c => c.style.setProperty('--px', (((p - 0.5) * 60) * c.dataset.depth) + 'px'));
+      lastP = p;
+      applyBand();
     }
+    // 季節の背景色: タイムラインを下るにつれて、雨季のくすんだ青灰色 → 祭りの秋の金色へ
+    const tlH = timeline.offsetHeight || 1;
+    setPageBg(clamp((anchor - timeline.getBoundingClientRect().top) / tlH, 0, 1));
     stampEls.forEach(el => {
       if (!el.classList.contains('in') && el.getBoundingClientRect().top < vb - 40) {
         el.classList.add('in'); setTimeout(() => el.classList.add('done'), 1500);
