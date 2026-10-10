@@ -150,12 +150,29 @@
   body{margin:0;background:#F7F1DD;}
   .stamp-book{margin:14px 0 0;padding:14px 14px 22px;font-family:'Zen Kaku Gothic New',sans-serif;}
   .stamp-book .sb-sub{margin:0 0 14px;text-align:center;font-size:12px;color:var(--ink-soft);}
-  .stamp-timeline{display:flex;flex-direction:column;gap:6px;}
+  .stamp-timeline{position:relative;display:flex;flex-direction:column;gap:6px;}
+  .tl-track{position:absolute;left:24px;width:0;border-left:2px dashed rgba(199,69,28,.3);pointer-events:none;}
+  .tl-progress{position:absolute;left:24px;width:2px;height:0;background:var(--vermillion);border-radius:2px;pointer-events:none;}
   .tl-row{position:relative;display:grid;grid-template-columns:50px 1fr;gap:4px;}
-  .tl-row::before{content:'';position:absolute;left:24px;top:22px;bottom:-8px;width:0;border-left:2px dashed rgba(199,69,28,.35);}
-  .tl-row:last-child::before{display:none;}
-  .tl-label{position:relative;display:flex;flex-direction:column;align-items:center;padding-top:2px;z-index:1;}
-  .tl-label .tl-month{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:var(--vermillion);color:#fff9ec;font-family:'Shippori Mincho',serif;font-weight:700;font-size:13px;box-shadow:0 0 0 3px #F7F1DD;}
+  .tl-label{position:relative;display:flex;flex-direction:column;align-items:center;padding-top:2px;z-index:1;align-self:start;will-change:transform;}
+  .tl-label .tl-month{box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;border:2px solid var(--vermillion);background:var(--vermillion);color:#fff9ec;font-family:'Shippori Mincho',serif;font-weight:700;font-size:13px;box-shadow:0 0 0 3px #F7F1DD;transition:background .4s ease,color .4s ease,transform .5s cubic-bezier(.2,1.4,.4,1);}
+  .stamp-book-head .sb-title{font-size:20px;letter-spacing:.06em;}
+  .sb-kicker{text-align:center;font-size:9px;letter-spacing:.42em;color:var(--ink-soft);opacity:.8;margin-bottom:4px;}
+  .event-stamp::after{content:'';position:absolute;inset:-3px;border-radius:50%;border:2px solid var(--vermillion);opacity:0;pointer-events:none;}
+  @keyframes inkRipple{0%{opacity:.6;transform:scale(1);}100%{opacity:0;transform:scale(1.5);}}
+  /* スクロール連動の演出(親ページからスクロール位置が届いたときだけ .motion が付く。届かなければ通常表示のまま) */
+  .motion .stamp-book-head,.motion .sb-sub,.motion .sb-kicker{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease;}
+  .motion .stamp-book-head.in,.motion .sb-sub.in,.motion .sb-kicker.in{opacity:1;transform:none;}
+  .motion .sb-sub.in{transition-delay:.15s;}
+  .motion .tl-row:not(.active) .tl-month{background:#F7F1DD;color:var(--vermillion);}
+  .motion .tl-row.active .tl-month{transform:scale(1.1);}
+  .motion .event-stamp{opacity:0;transform:translateY(28px) scale(1.32) rotate(calc(var(--r) - 14deg));transition:opacity .45s ease var(--d,0s),transform .75s cubic-bezier(.2,1.5,.4,1) var(--d,0s);}
+  .motion .event-stamp.in{opacity:1;transform:rotate(var(--r));}
+  .motion .event-stamp.draft.in{opacity:.6;}
+  .motion .event-stamp.in:not(.draft)::after{animation:inkRipple .9s ease-out var(--d,0s) 1 both;}
+  .motion .event-stamp.in.done{transition:transform .2s ease,box-shadow .2s ease;}
+  .motion .event-stamp.in.done:hover,.motion .event-stamp.in.done:focus-visible{transform:rotate(0deg) scale(1.08);box-shadow:0 3px 10px rgba(34,58,94,.2);}
+  @media (prefers-reduced-motion: reduce){.motion .event-stamp,.motion .stamp-book-head,.motion .sb-sub,.motion .sb-kicker{opacity:1;transform:none;transition:none;}}
   .tl-label small{margin-top:3px;font-size:9px;color:var(--ink-soft);text-align:center;line-height:1.2;}
   .tl-stamps{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:10px 8px;padding-bottom:10px;}
   .stamp-book-head{display:flex;align-items:baseline;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
@@ -204,6 +221,7 @@
 </div>
 
 <section class="stamp-book" aria-label="行事スタンプ帳">
+  <div class="sb-kicker">SEASONS OF INDIA</div>
   <div class="stamp-book-head">
     <span class="sb-title">📮 行事スタンプ帳</span>
     <span class="sb-progress" id="stamp-progress">0<small>/0</small> コンプリート</span>
@@ -626,8 +644,13 @@
   // 埋め込み先のレイアウトが確定する前に地図が初期化されると、サイズを誤認識してピンが描画されないことがあるため、表示直前にサイズを再計算する
   map.invalidateSize();
 
-  // 日本を中心にした初期表示(世界全体が見える低ズームで固定)
-  map.setView([36.5, CENTER_LNG], 2);
+  // 初期表示はバンガロール上空。親ページで地図が見えたら、日本中心の世界全体ビューへ引いていく(演出)
+  const WORLD_VIEW = [[36.5, CENTER_LNG], 2];
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) { map.setView(WORLD_VIEW[0], WORLD_VIEW[1]); }
+  else { map.setView([12.97, 77.59], 5); }
+  let introDone = reduceMotion;
+  const runIntro = () => { if (introDone) return; introDone = true; map.flyTo(WORLD_VIEW[0], WORLD_VIEW[1], { duration: 2.8 }); };
 
   // カテゴリ切り替え(チップをクリックで表示/非表示)
   document.querySelectorAll('.chip').forEach(chip => {
@@ -676,8 +699,79 @@
     stampGrid.appendChild(row);
   });
 
+  // ---- スクロール連動の演出 ----
+  // 親ページ(ブログ)から「iframeの上端位置と画面の高さ」が届いたときだけ有効になる。届かない環境では通常表示のまま
+  const timeline = stampGrid;
+  const tlTrack = document.createElement('div'); tlTrack.className = 'tl-track';
+  const tlProgress = document.createElement('div'); tlProgress.className = 'tl-progress';
+  timeline.prepend(tlTrack, tlProgress);
+  const rows = Array.from(timeline.querySelectorAll('.tl-row'));
+  const stampEls = Array.from(timeline.querySelectorAll('.event-stamp'));
+  rows.forEach(row => row.querySelectorAll('.event-stamp').forEach((el, i) => el.style.setProperty('--d', (i * 0.09) + 's')));
+  const headEls = [document.querySelector('.sb-kicker'), document.querySelector('.stamp-book-head'), document.querySelector('.sb-sub')];
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  const layoutTimeline = () => {
+    if (!rows.length) return;
+    const first = rows[0].offsetTop, last = rows[rows.length - 1].offsetTop;
+    tlTrack.style.top = (first + 22) + 'px';
+    tlTrack.style.height = Math.max(0, last - first) + 'px';
+    tlProgress.style.top = tlTrack.style.top;
+  };
+  layoutTimeline();
+
+  let view = null, motionOn = false, counted = false;
+  const countUp = () => {
+    if (counted) return; counted = true;
+    const el = document.getElementById('stamp-progress'); const t0 = performance.now();
+    const step = now => {
+      const p = clamp((now - t0) / 900, 0, 1);
+      el.innerHTML = `${Math.round(gotStamps * (1 - Math.pow(1 - p, 3)))}<small>/${cultureStamps.length}</small> コンプリート`;
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+
+  const tick = () => {
+    if (!view) return;
+    const vt = -view.top, vb = vt + view.vh, anchor = vt + view.vh * 0.62;
+    if (!introDone) {
+      const r = document.getElementById('sink-map-wrap').getBoundingClientRect();
+      if (r.top < vb - 140 && r.bottom > vt + 140) runIntro();
+    }
+    if (!motionOn) return;
+    headEls.forEach((el, i) => {
+      if (!el.classList.contains('in') && el.getBoundingClientRect().top < vb - 50) { el.classList.add('in'); if (i === 1) countUp(); }
+    });
+    stampEls.forEach(el => {
+      if (!el.classList.contains('in') && el.getBoundingClientRect().top < vb - 40) {
+        el.classList.add('in'); setTimeout(() => el.classList.add('done'), 1500);
+      }
+    });
+    const trackTop = timeline.getBoundingClientRect().top + parseFloat(tlTrack.style.top || 0);
+    const trackH = parseFloat(tlTrack.style.height || 0);
+    tlProgress.style.height = clamp(anchor - trackTop, 0, trackH) + 'px';
+    rows.forEach(row => {
+      const rr = row.getBoundingClientRect();
+      row.classList.toggle('active', rr.top + 22 < anchor);
+      const label = row.firstElementChild;
+      const shift = clamp(vt + 12 - rr.top, 0, Math.max(0, rr.height - label.offsetHeight - 4));
+      label.style.transform = shift ? `translateY(${shift}px)` : '';
+    });
+  };
+
+  window.addEventListener('message', e => {
+    if (e.source !== window.parent || !e.data || !e.data.sinkView) return;
+    view = e.data.sinkView;
+    if (!reduceMotion && !motionOn) { motionOn = true; document.documentElement.classList.add('motion'); }
+    tick();
+  });
+  // 親ページから位置が届かない環境でも、導入の演出だけは一度走らせる
+  window.addEventListener('load', () => setTimeout(() => { if (!view) runIntro(); }, 2500));
+
   // 埋め込み先(iframe)の高さを中身に合わせて親ページへ通知する
   const sendHeight = () => {
+    layoutTimeline();
     const h = Math.ceil(document.body.getBoundingClientRect().height);
     if (window.parent !== window) window.parent.postMessage({ sinkMapHeight: h }, '*');
   };
