@@ -159,6 +159,31 @@
   .stamp-book-head .sb-title{font-size:20px;letter-spacing:.06em;}
   .sb-kicker{text-align:center;font-size:9px;letter-spacing:.42em;color:var(--ink-soft);opacity:.8;margin-bottom:4px;}
   .event-stamp::after{content:'';position:absolute;inset:-3px;border-radius:50%;border:2px solid var(--vermillion);opacity:0;pointer-events:none;}
+  .event-stamp .es-count{margin-top:1px;font-size:8.5px;font-weight:700;letter-spacing:.04em;color:#fff9ec;background:var(--ink-soft);padding:1px 7px;border-radius:999px;}
+  .event-stamp.draft.has-count{opacity:.8;}
+  .motion .event-stamp.draft.has-count.in{opacity:.8;}
+  /* ---- Postcards band ---- */
+  .postcards{margin:20px 0 2px;padding:6px 0 0;font-family:'Zen Kaku Gothic New',sans-serif;}
+  .postcards .pc-head{text-align:center;margin-bottom:4px;}
+  .postcards .pc-main{font-family:'Shippori Mincho',serif;font-weight:700;font-size:20px;letter-spacing:.06em;color:var(--ink);}
+  .postcards .pc-sub{margin:4px 0 0;font-size:12px;color:var(--ink-soft);}
+  .pc-band{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:20px 14px 40px;}
+  .pc-track{display:flex;gap:18px;width:max-content;}
+  .motion .pc-band{overflow:hidden;}
+  .motion .pc-track{will-change:transform;}
+  .pcard{--rot:0deg;--dy:0px;--px:0px;position:relative;flex:none;width:214px;height:150px;box-sizing:border-box;padding:14px 14px 10px;display:flex;flex-direction:column;gap:3px;text-decoration:none;color:var(--ink);background:#FBF6E9;border:1px solid rgba(34,58,94,.12);border-radius:3px;box-shadow:0 6px 16px rgba(34,58,94,.16);transform:translate(var(--px),var(--dy)) rotate(var(--rot));transition:transform .28s ease,box-shadow .28s ease;}
+  .pcard:hover,.pcard:focus-visible{transform:translate(var(--px),calc(var(--dy) - 8px)) rotate(0deg);box-shadow:0 12px 24px rgba(34,58,94,.24);}
+  .pcard:focus-visible{outline:3px solid var(--gold);outline-offset:3px;}
+  .pcard .pc-tape{position:absolute;top:-9px;left:16px;width:46px;height:17px;background:rgba(232,163,61,.55);border:1px solid rgba(232,163,61,.7);transform:rotate(-5deg);}
+  .pcard .pc-stamp{position:absolute;top:11px;right:12px;width:30px;height:30px;border-radius:50%;border:2px solid #fff9ec;box-shadow:0 0 0 1px rgba(34,58,94,.25);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff9ec;}
+  .pcard .pc-mark{position:absolute;top:12px;right:46px;width:34px;height:34px;border-radius:50%;border:1px dashed var(--ink-soft);display:flex;align-items:center;justify-content:center;text-align:center;font-size:6.5px;line-height:1.15;letter-spacing:.06em;color:var(--ink-soft);transform:rotate(-14deg);opacity:.75;}
+  .pcard .pc-cat{font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--ink-soft);}
+  .pcard .pc-name{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:700;line-height:1.3;padding-right:78px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .pcard .pc-note{font-family:'Yomogi',cursive;font-size:12px;line-height:1.45;color:var(--ink-soft);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+  .pcard .pc-go{margin-top:auto;font-size:10px;font-weight:700;color:var(--vermillion);}
+  .motion [data-reveal]{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease;}
+  .motion [data-reveal].in{opacity:1;transform:none;}
+  @media (prefers-reduced-motion: reduce){.motion [data-reveal]{opacity:1;transform:none;transition:none;}}
   @keyframes inkRipple{0%{opacity:.6;transform:scale(1);}100%{opacity:0;transform:scale(1.5);}}
   /* スクロール連動の演出(親ページからスクロール位置が届いたときだけ .motion が付く。届かなければ通常表示のまま) */
   .motion .stamp-book-head,.motion .sb-sub,.motion .sb-kicker{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease;}
@@ -219,6 +244,15 @@
   <div id="sink-map" role="region" aria-label="世界の食べ歩き・旅行・ホテル記録地図"></div>
 </div>
 </div>
+
+<section class="postcards" aria-label="旅先からの絵はがき">
+  <div class="pc-head">
+    <div class="sb-kicker" data-reveal>POSTCARDS FROM EVERYWHERE</div>
+    <div class="pc-main" data-reveal>旅先からの絵はがき</div>
+    <p class="pc-sub" data-reveal>これまでの記事から、毎日ちがう9枚。</p>
+  </div>
+  <div class="pc-band" id="pc-band"><div class="pc-track" id="pc-track"></div></div>
+</section>
 
 <section class="stamp-book" aria-label="行事スタンプ帳">
   <div class="sb-kicker">SEASONS OF INDIA</div>
@@ -673,6 +707,18 @@
   // 行事日の月ごとにまとめて、縦のタイムライン(季節の流れ)として並べる。配列は日付順に書いておく
   const monthOf = d => { const m = /^(\d+)\//.exec(d); return m ? parseInt(m[1], 10) : 0; };
   const seasonOf = m => m === 0 ? 'モンスーン' : (m >= 6 && m <= 9 ? '雨季' : (m >= 10 && m <= 11 ? '祭りの秋' : ''));
+  // 未公開スタンプ用: 行事の開始日までの残り日数(行事中は「開催中」、終わっていれば空)
+  const countdownOf = d => {
+    const m = /^(\d+)\/(\d+)(?:-(\d+)\/(\d+))?$/.exec(d);
+    if (!m) return '';
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    let y = today.getFullYear();
+    const mk = yy => [new Date(yy, +m[1] - 1, +m[2]), m[3] ? new Date(yy, +m[3] - 1, +m[4]) : new Date(yy, +m[1] - 1, +m[2])];
+    let [start, end] = mk(y);
+    if (end < today - 200 * 864e5) [start, end] = mk(++y);
+    if (today < start) return `あと${Math.round((start - today) / 864e5)}日`;
+    return today <= end ? '開催中' : '';
+  };
   const groups = [];
   cultureStamps.forEach(s => {
     const m = monthOf(s.date);
@@ -692,12 +738,38 @@
       el.className = `event-stamp${isDraft ? ' draft' : ''}`;
       el.style.setProperty('--r', `${s.rotate}deg`);
       if (!isDraft) { el.href = s.articleUrl; el.target = '_blank'; el.rel = 'noopener'; }
-      el.innerHTML = `<span class="es-icon">${s.icon}</span><span class="es-label">${s.label}</span><span class="es-date">${s.date}</span>`;
+      const cd = isDraft ? countdownOf(s.date) : '';
+      if (cd) el.classList.add('has-count');
+      el.innerHTML = `<span class="es-icon">${s.icon}</span><span class="es-label">${s.label}</span><span class="es-date">${s.date}</span>${cd ? `<span class="es-count">${cd}</span>` : ''}`;
       box.appendChild(el);
     });
     row.appendChild(box);
     stampGrid.appendChild(row);
   });
+
+  // ---- 絵はがき: 公開済み記事(ピン)から、日替わりで9枚 ----
+  const pcTrack = document.getElementById('pc-track');
+  const pcBand = document.getElementById('pc-band');
+  (() => {
+    const seen = new Set(); const list = [];
+    spots.forEach(s => { if (s.articleUrl && !seen.has(s.articleUrl)) { seen.add(s.articleUrl); list.push(s); } });
+    const d = new Date();
+    let seed = d.getFullYear() * 372 + (d.getMonth() + 1) * 31 + d.getDate();
+    const rnd = () => (seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296;
+    for (let i = list.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [list[i], list[j]] = [list[j], list[i]]; }
+    const pick = list.slice(0, 9);
+    if (!pick.length) { pcBand.closest('.postcards').style.display = 'none'; return; }
+    pick.forEach((s, i) => {
+      const cat = categories[s.category];
+      const a = document.createElement('a');
+      a.className = 'pcard'; a.href = s.articleUrl; a.target = '_blank'; a.rel = 'noopener';
+      a.style.setProperty('--rot', ((i % 2 ? 1 : -1) * (1.2 + (i % 3) * 0.9)) + 'deg');
+      a.style.setProperty('--dy', ((i % 3) * 7) + 'px');
+      a.dataset.depth = (i % 2 ? 1 : -1) * (0.4 + (i % 3) * 0.3);
+      a.innerHTML = `<span class="pc-tape"></span><span class="pc-stamp" style="background:${cat.color}">${cat.icon}</span><span class="pc-mark">SINK<br>NOTES</span><span class="pc-cat">${cat.label}</span><b class="pc-name">${s.name}</b><span class="pc-note">${s.note}</span><span class="pc-go">記事を読む →</span>`;
+      pcTrack.appendChild(a);
+    });
+  })();
 
   // ---- スクロール連動の演出 ----
   // 親ページ(ブログ)から「iframeの上端位置と画面の高さ」が届いたときだけ有効になる。届かない環境では通常表示のまま
@@ -708,7 +780,8 @@
   const rows = Array.from(timeline.querySelectorAll('.tl-row'));
   const stampEls = Array.from(timeline.querySelectorAll('.event-stamp'));
   rows.forEach(row => row.querySelectorAll('.event-stamp').forEach((el, i) => el.style.setProperty('--d', (i * 0.09) + 's')));
-  const headEls = [document.querySelector('.sb-kicker'), document.querySelector('.stamp-book-head'), document.querySelector('.sb-sub')];
+  const headEls = Array.from(document.querySelectorAll('[data-reveal],.stamp-book .sb-kicker,.stamp-book-head,.sb-sub'));
+  const pcCards = Array.from(pcTrack.children);
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
   const layoutTimeline = () => {
@@ -740,9 +813,17 @@
       if (r.top < vb - 140 && r.bottom > vt + 140) runIntro();
     }
     if (!motionOn) return;
-    headEls.forEach((el, i) => {
-      if (!el.classList.contains('in') && el.getBoundingClientRect().top < vb - 50) { el.classList.add('in'); if (i === 1) countUp(); }
+    headEls.forEach(el => {
+      if (!el.classList.contains('in') && el.getBoundingClientRect().top < vb - 50) { el.classList.add('in'); if (el.classList.contains('stamp-book-head')) countUp(); }
     });
+    // 絵はがきの帯: 帯が画面を通過する間に、横へ流れる。カードごとに少しずつ違う動きで奥行きを出す
+    if (pcCards.length) {
+      const bandRect = pcBand.getBoundingClientRect();
+      const p = clamp((vb - bandRect.top) / (view.vh + bandRect.height), 0, 1);
+      const range = Math.max(0, pcTrack.scrollWidth - pcBand.clientWidth + 28);
+      pcTrack.style.transform = `translateX(${-p * range}px)`;
+      pcCards.forEach(c => c.style.setProperty('--px', (((p - 0.5) * 60) * c.dataset.depth) + 'px'));
+    }
     stampEls.forEach(el => {
       if (!el.classList.contains('in') && el.getBoundingClientRect().top < vb - 40) {
         el.classList.add('in'); setTimeout(() => el.classList.add('done'), 1500);
