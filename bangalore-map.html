@@ -429,11 +429,11 @@
     { category:'travel', name:"ポラリスラウンジ(シカゴ)", lat:41.9799743, lng:-87.9098160,
       note:"オヘア空港のユナイテッド ポラリスラウンジ&ビジネスクラス搭乗記(シカゴ→ブリュッセル)。", articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%82%aa%e3%83%98%e3%82%a2%e7%a9%ba%e6%b8%af%e3%80%91united-polaris%e3%83%a9%e3%82%a6%e3%83%b3%e3%82%b8%e3%83%93%e3%82%b8%e3%83%8d%e3%82%b9%e3%82%af%e3%83%a9%e3%82%b9%e6%90%ad%e4%b9%97/" },
     { category:'food', name:"巨済食堂", lat:37.5592777, lng:126.9773485,
-      note:"南大門市場カルグクス横丁の名店。手打ち麺のカルグクス。10/25公開予定。", articleUrl:null },
+      note:"南大門市場カルグクス横丁の名店。手打ち麺のカルグクス。", articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%82%bd%e3%82%a6%e3%83%ab%e3%83%bb%e5%8d%97%e5%a4%a7%e9%96%80%e5%ba%83%e8%94%b5%e5%b8%82%e5%a0%b4%e3%80%91ikko%e3%81%95%e3%82%93%e5%be%a1%e7%94%a8%e9%81%94%e3%82%ab%e3%83%ab%e3%82%b0/" },
     { category:'food', name:"広蔵市場", lat:37.5701890, lng:126.9994995,
-      note:"ソウルの老舗市場。食べ歩きグルメの聖地。10/25公開予定。", articleUrl:null },
+      note:"ソウルの老舗市場。食べ歩きグルメの聖地。", articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%82%bd%e3%82%a6%e3%83%ab%e3%83%bb%e5%8d%97%e5%a4%a7%e9%96%80%e5%ba%83%e8%94%b5%e5%b8%82%e5%a0%b4%e3%80%91ikko%e3%81%95%e3%82%93%e5%be%a1%e7%94%a8%e9%81%94%e3%82%ab%e3%83%ab%e3%82%b0/" },
     { category:'hotel', name:"COEX付近のホテル(江南・三成)", lat:37.5118733, lng:127.0591105,
-      note:"COEX目の前を拠点に巡ったソウルグルメ旅。10/28公開予定。", articleUrl:null },
+      note:"COEX目の前を拠点に巡ったソウルグルメ旅。", articleUrl:"https://ourplannedjourney.com/%e3%80%90%e6%b1%9f%e5%8d%97%e3%83%bb%e4%b8%89%e6%88%90%e3%80%91coex%e7%9b%ae%e3%81%ae%e5%89%8d%e3%81%ae%e3%83%9b%e3%83%86%e3%83%ab%e3%82%92%e6%8b%a0%e7%82%b9%e3%81%ab%e5%b7%a1%e3%81%a3%e3%81%9f/" },
     { category:'food', name:"Toro Brew House & Kitchen", lat:13.0314459, lng:77.5773338,
       note:"サンジェイナガルのクラフトビール醸造所。意外な一品も堪能。10/31公開予定。", articleUrl:null },
     { category:'food', name:"Keens Steakhouse", lat:40.7507730, lng:-73.9864091,
@@ -842,6 +842,7 @@
 
   // 「プロモーション」または「アフィリエイト」の表記がある記事(WordPress REST APIの本文で判定。Updateのたびに更新する)
   const affiliateArticles = new Set([
+    "https://ourplannedjourney.com/%e3%80%90%e6%b1%9f%e5%8d%97%e3%83%bb%e4%b8%89%e6%88%90%e3%80%91coex%e7%9b%ae%e3%81%ae%e5%89%8d%e3%81%ae%e3%83%9b%e3%83%86%e3%83%ab%e3%82%92%e6%8b%a0%e7%82%b9%e3%81%ab%e5%b7%a1%e3%81%a3%e3%81%9f/",
     "https://ourplannedjourney.com/%e3%80%90%e3%82%a2%e3%83%b4%e3%82%a3%e3%83%8b%e3%83%a7%e3%83%b3%e3%80%91%e5%9f%8e%e5%a3%81%e3%81%ab%e5%9b%b2%e3%81%be%e3%82%8c%e3%81%9f%e8%a1%97%e6%ad%a9%e3%81%8d%e3%81%a8%e3%82%a2%e3%83%ab%e3%83%ab/",
     "https://ourplannedjourney.com/%e3%80%90%e3%83%95%e3%83%ad%e3%83%aa%e3%83%80%e3%82%ad%e3%83%bc%e3%82%ba%e3%80%917%e3%83%9e%e3%82%a4%e3%83%ab%e3%83%96%e3%83%aa%e3%83%83%e3%82%b8%e3%82%92%e6%b8%a1%e3%81%a3%e3%81%a6%e3%82%ad%e3%83%bc/",
     "https://ourplannedjourney.com/%e3%80%90%e3%83%9e%e3%82%a4%e3%82%bd%e3%83%bc%e3%83%ab%e3%83%bb%e3%83%80%e3%82%b5%e3%83%a92026%e3%80%91%e5%8f%82%e5%8a%a0%e3%81%99%e3%82%8b%e3%81%aa%e3%82%89%e3%81%a9%e3%81%93%e3%81%b8%e8%a1%8c/",
