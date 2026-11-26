@@ -473,7 +473,7 @@
     { category:'travel', name:"バンガロールターフクラブ", lat:12.9823258, lng:77.5807803,
       note:"VIPラウンジで観戦するバンガロール競馬。", articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%83%90%e3%83%b3%e3%82%ac%e3%83%ad%e3%83%bc%e3%83%ab%e7%ab%b6%e9%a6%ac%e3%80%91%e3%83%90%e3%83%b3%e3%82%ac%e3%83%ad%e3%83%bc%e3%83%ab%e3%82%bf%e3%83%bc%e3%83%95%e3%82%af%e3%83%a9%e3%83%96-v/" },
     { category:'food', name:"バレンシア パエリア食べ比べ", lat:39.4697065, lng:-0.3763353,
-      note:"パエリア発祥の地で伝統派と海鮮派を食べ比べ。11/24公開予定。", articleUrl:null },
+      note:"パエリア発祥の地で伝統派と海鮮派を食べ比べ。", articleUrl:"https://ourplannedjourney.com/%e3%80%90%e3%83%90%e3%83%ac%e3%83%b3%e3%82%b7%e3%82%a2%e3%80%91%e3%83%91%e3%82%a8%e3%83%aa%e3%82%a2%e7%99%ba%e7%a5%a5%e3%81%ae%e5%9c%b0%e3%81%a7%e4%bc%9d%e7%b5%b1%e6%b4%be%e3%81%a8%e6%b5%b7%e9%ae%ae/" },
     { category:'food', name:"The Bier Library", lat:12.9391229, lng:77.6262498,
       note:"コラマンガラの人気ブリュワリーで開放的な夜を。11/27公開予定。", articleUrl:null },
     { category:'travel', name:"ブルックリン橋", lat:40.7062175, lng:-73.9970208,
@@ -900,6 +900,7 @@
 
   // 「プロモーション」または「アフィリエイト」の表記がある記事(WordPress REST APIの本文で判定。Updateのたびに更新する)
   const affiliateArticles = new Set([
+    "https://ourplannedjourney.com/%e3%80%90%e3%83%90%e3%83%ac%e3%83%b3%e3%82%b7%e3%82%a2%e3%80%91%e3%83%91%e3%82%a8%e3%83%aa%e3%82%a2%e7%99%ba%e7%a5%a5%e3%81%ae%e5%9c%b0%e3%81%a7%e4%bc%9d%e7%b5%b1%e6%b4%be%e3%81%a8%e6%b5%b7%e9%ae%ae/",
     "https://ourplannedjourney.com/%e3%80%90%e6%b1%9f%e5%8d%97%e3%83%bb%e4%b8%89%e6%88%90%e3%80%91coex%e7%9b%ae%e3%81%ae%e5%89%8d%e3%81%ae%e3%83%9b%e3%83%86%e3%83%ab%e3%82%92%e6%8b%a0%e7%82%b9%e3%81%ab%e5%b7%a1%e3%81%a3%e3%81%9f/",
     "https://ourplannedjourney.com/%e3%80%90%e3%82%a2%e3%83%b4%e3%82%a3%e3%83%8b%e3%83%a7%e3%83%b3%e3%80%91%e5%9f%8e%e5%a3%81%e3%81%ab%e5%9b%b2%e3%81%be%e3%82%8c%e3%81%9f%e8%a1%97%e6%ad%a9%e3%81%8d%e3%81%a8%e3%82%a2%e3%83%ab%e3%83%ab/",
     "https://ourplannedjourney.com/%e3%80%90%e3%83%95%e3%83%ad%e3%83%aa%e3%83%80%e3%82%ad%e3%83%bc%e3%82%ba%e3%80%917%e3%83%9e%e3%82%a4%e3%83%ab%e3%83%96%e3%83%aa%e3%83%83%e3%82%b8%e3%82%92%e6%b8%a1%e3%81%a3%e3%81%a6%e3%82%ad%e3%83%bc/",
